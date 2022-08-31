@@ -1,4 +1,29 @@
+import { isConstructSignatureDeclaration } from "typescript"
+
+const isProduction = process.env.NODE_ENV == 'production'
+const isDev = process.env.NODE_ENV == 'development'
+
 export default {
+  dev: isDev,
+  router: {
+    mode: 'hash',
+  },
+  build: {
+    extend(config) {
+      if (!isDev) {
+        config.output.publicPath = '_nuxt/'
+      }
+
+      config.node = {
+        __dirname: !isProductionm,
+        __filename: !isProduction,
+      }
+    },
+  },
+  generate: {
+    dir: '../../dist/nuxt-build',
+  },
+  telemetry: false,
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
