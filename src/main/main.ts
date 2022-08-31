@@ -2,7 +2,7 @@ import nuxtConfig from '../renderer/nuxt.config'
 const http = require('http')
 const path = require('path')
 const { Nuxt, Builder } = require('nuxt')
-const electron = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 // @ts-ignore
 nuxtConfig.rootDir = path.resolve('src/renderer')
@@ -30,14 +30,13 @@ if (isDev) {
 }
 
 let win: any = null
-const app = electron.app
 const newWin = () => {
-  win = new electron.BrowserWindow({
+  win = new BrowserWindow({
     width: 1400,
     height: 1000,
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: false,
+      nodeIntegration: true,
+      contextIsolation: true,
       preload: path.resolve(path.join(__dirname, 'preload.js')),
       webSecurity: false,
     },
@@ -74,3 +73,7 @@ const newWin = () => {
 app.on('ready', newWin)
 app.on('window-all-closed', () => app.quit())
 app.on('activate', () => win === null && newWin())
+
+ipcMain.handle('hello', () => {
+    console.log('test ipc message');
+  })
